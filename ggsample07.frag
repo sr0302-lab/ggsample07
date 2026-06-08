@@ -24,13 +24,20 @@ void main(void)
   vec3 nn = normalize(n);                           // 法線ベクトル
   vec3 nl = normalize(l);                           // 光線ベクトル
   vec3 nv = normalize(v);                           // 視線ベクトル
-  vec3 nr = reflect(nl, nn);                        // 反射ベクトル
+  
+  // 修正箇所(開始)
+  // 円柱の軸方向を表す接線ベクトルt
+  vec3 b = vec3(-nn.z, 0.0, nn.x);                  // 従接線ベクトル (n × (0, 1, 0))？
+  vec3 t = normalize(cross(nn, b));                 // 接線ベクトル (n × b)？
 
-  vec3 b = vec3(-n.z, 0.0, n.x);                    // 従接線ベクトル (n × (0, 1, 0))
-  vec3 t = normalize(cross(n, b));                  // 接線ベクトル (n × b)
+  // 拡散反射
+  float rd = sqrt(max(1.0 - dot(t, nl) * dot(t, nl), 0.0));
 
-  float rd = dot(nn, nl);
-  float rs = dot(nr, nv);
+  // Kajiya-Kayの鏡面反射
+  float tl = dot(t, nl);
+  float tv = dot(t, nv);
+
+  float rs = tl * tv + sqrt(max(1.0 - tl * tl, 0.0)) * sqrt(max(1.0 - tv * tv, 0.0));
 
   vec4 iamb = kamb * lamb;
   vec4 idiff = max(rd, 0.0) * kdiff * ldiff;
