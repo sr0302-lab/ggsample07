@@ -25,10 +25,11 @@ void main(void)
   vec3 nl = normalize(l);                           // 光線ベクトル
   vec3 nv = normalize(v);                           // 視線ベクトル
   
-  // 修正箇所(開始)
+  // 課題の修正箇所(開始)
+
   // 円柱の軸方向を表す接線ベクトルt
-  vec3 b = vec3(-nn.z, 0.0, nn.x);                  // 従接線ベクトル (n × (0, 1, 0))？
-  vec3 t = normalize(cross(nn, b));                 // 接線ベクトル (n × b)？
+  vec3 b = vec3(-nn.z, 0.0, nn.x);                  // 従接線ベクトル
+  vec3 t = normalize(cross(nn, b));                 // 接線ベクトル
 
   // 拡散反射
   float rd = sqrt(max(1.0 - dot(t, nl) * dot(t, nl), 0.0));
@@ -40,8 +41,10 @@ void main(void)
   float rs = tl * tv + sqrt(max(1.0 - tl * tl, 0.0)) * sqrt(max(1.0 - tv * tv, 0.0));
 
   vec4 iamb = kamb * lamb;
-  vec4 idiff = max(rd, 0.0) * kdiff * ldiff;
+  vec4 idiff = rd * kdiff * ldiff;
   vec4 ispec = pow(max(rs, 0.0), kshi) * kspec * lspec;
+  
+  // 課題の修正箇所(終了)
 
   fc = iamb + idiff + ispec;
 }
